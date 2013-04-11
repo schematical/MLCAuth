@@ -8,8 +8,6 @@
 * - ToXml()
 * - Query()
 * - QueryCount()
-* - LoadCollByIdUser()
-* - LoadCollByIdUserSettingTypeCd()
 * - LoadByTag()
 * - AddTag()
 * - ParseArray()
@@ -61,12 +59,12 @@ class AuthUserSettingBase extends BaseEntity {
         $xmlStr.= "<idUser>";
         $xmlStr.= $this->idUser;
         $xmlStr.= "</idUser>";
-        $xmlStr.= "<idUserSettingTypeCd>";
-        $xmlStr.= $this->idUserSettingTypeCd;
-        $xmlStr.= "</idUserSettingTypeCd>";
-        $xmlStr.= "<value>";
-        $xmlStr.= $this->value;
-        $xmlStr.= "</value>";
+        $xmlStr.= "<namespace>";
+        $xmlStr.= $this->namespace;
+        $xmlStr.= "</namespace>";
+        $xmlStr.= "<data>";
+        $xmlStr.= $this->data;
+        $xmlStr.= "</data>";
         if ($blnReclusive) {
             //Finish FK Rel stuff
             
@@ -101,28 +99,6 @@ class AuthUserSettingBase extends BaseEntity {
     }
     //Get children
     //Load by foregin key
-    public static function LoadCollByIdUser($intIdUser) {
-        $sql = sprintf("SELECT * FROM AuthUserSetting WHERE idUser = %s;", $intIdUser);
-        $result = MLCDBDriver::Query($sql);
-        $coll = new BaseEntityCollection();
-        while ($data = mysql_fetch_assoc($result)) {
-            $objAuthUserSetting = new AuthUserSetting();
-            $objAuthUserSetting->materilize($data);
-            $coll->addItem($objAuthUserSetting);
-        }
-        return $coll;
-    }
-    public static function LoadCollByIdUserSettingTypeCd($intIdUserSettingTypeCd) {
-        $sql = sprintf("SELECT * FROM AuthUserSetting WHERE idUserSettingTypeCd = %s;", $intIdUserSettingTypeCd);
-        $result = MLCDBDriver::Query($sql);
-        $coll = new BaseEntityCollection();
-        while ($data = mysql_fetch_assoc($result)) {
-            $objAuthUserSetting = new AuthUserSetting();
-            $objAuthUserSetting->materilize($data);
-            $coll->addItem($objAuthUserSetting);
-        }
-        return $coll;
-    }
     public function LoadByTag($strTag) {
         return MLCTagDriver::LoadTaggedEntites($strTag, get_class($this));
     }
@@ -182,8 +158,8 @@ class AuthUserSettingBase extends BaseEntity {
         $arrReturn['_ClassName'] = "AuthUserSetting";
         $arrReturn['idUserSetting'] = $this->idUserSetting;
         $arrReturn['idUser'] = $this->idUser;
-        $arrReturn['idUserSettingTypeCd'] = $this->idUserSettingTypeCd;
-        $arrReturn['value'] = $this->value;
+        $arrReturn['namespace'] = $this->namespace;
+        $arrReturn['data'] = $this->data;
         return $arrReturn;
     }
     public function __toJson($blnPosponeEncode = false) {
@@ -210,17 +186,17 @@ class AuthUserSettingBase extends BaseEntity {
                 }
                 return null;
             break;
-            case ('IdUserSettingTypeCd'):
-            case ('idUserSettingTypeCd'):
-                if (array_key_exists('idUserSettingTypeCd', $this->arrDBFields)) {
-                    return $this->arrDBFields['idUserSettingTypeCd'];
+            case ('Namespace'):
+            case ('namespace'):
+                if (array_key_exists('namespace', $this->arrDBFields)) {
+                    return $this->arrDBFields['namespace'];
                 }
                 return null;
             break;
-            case ('Value'):
-            case ('value'):
-                if (array_key_exists('value', $this->arrDBFields)) {
-                    return $this->arrDBFields['value'];
+            case ('Data'):
+            case ('data'):
+                if (array_key_exists('data', $this->arrDBFields)) {
+                    return $this->arrDBFields['data'];
                 }
                 return null;
             break;
@@ -240,13 +216,13 @@ class AuthUserSettingBase extends BaseEntity {
                 case ('idUser'):
                     $this->arrDBFields['idUser'] = $strValue;
                 break;
-                case ('IdUserSettingTypeCd'):
-                case ('idUserSettingTypeCd'):
-                    $this->arrDBFields['idUserSettingTypeCd'] = $strValue;
+                case ('Namespace'):
+                case ('namespace'):
+                    $this->arrDBFields['namespace'] = $strValue;
                 break;
-                case ('Value'):
-                case ('value'):
-                    $this->arrDBFields['value'] = $strValue;
+                case ('Data'):
+                case ('data'):
+                    $this->arrDBFields['data'] = $strValue;
                 break;
                     defualt:
                         throw new Exception('No property with name "' . $strName . '" exists in class ". get_class($this) . "');
