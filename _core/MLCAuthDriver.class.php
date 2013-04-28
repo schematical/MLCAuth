@@ -60,7 +60,7 @@ class MLCAuthDriver{
 		
         return $objNUser;
     }
-	
+
 	public static function CreateTempUserSession(){
         $objNUser = new AuthUser();  
         $objNUser->Save();
@@ -106,13 +106,34 @@ class MLCAuthDriver{
         }        
 		
 	}
+
+    public static function AuthenticateByUserSetting($strKey, $strValue, $strPassword){
+        $objUser = AuthUser::QueryByUserSetting($strKey, $strValue);
+        //die($strEmail . "," . self::HashPass($strPassword));
+        if(is_null($objUser)){
+            return false;
+        }
+
+        if($objUser->password == self::HashPass($strPassword)){
+            self::$objUser = $objUser;
+        }
+        if(!is_null(self::$objUser)){
+            self::StartSession(self::$objUser);
+            return true;
+        }else{
+            return false;
+        }
+
+    }
     /**
      * This function checks the cookies to see if there is an active session for this user
      * and returns the session if there is
      * @return <Session>
      */
-    public static function LoadSession(){
-        $strSessionKey = MLCCookieDriver::GetCookie(self::SESSION_COOKIE);
+    public static function LoadSession($strSessionKey = null){
+        if(is_null($strSessionKey)){
+            $strSessionKey = MLCCookieDriver::GetCookie(self::SESSION_COOKIE);
+        }
 		
         if(!is_null($strSessionKey)){
             $objSession = AuthSession::LoadSingleByField('sessionKey', $strSessionKey);
@@ -222,14 +243,22 @@ class MLCAuthDriver{
     }
     public static function GetActiveSession($mixUser, $blnForceEnd = false){
     	if(is_numeric($mixUser)){
-    		$objUser = User::LoadById($mixUser);
-    	}elseif(get_class($mixUser) == 'User'){
+    		$objUser = AuthUser::LoadById($mixUser);
+    	}elseif(get_class($mixUser) == 'AuthUser'){
     		$objUser = $mixUser;
     	}else{
     		throw new Exception("First parameter must be either an Integer or a User object");
     	}
-    	$arrSessions = AuthSession::LoadActive($objUser->idUser);
-    	
+    	$arrSessions = AuthSession::Query(
+            //die(
+            sprintf(
+                "WHERE idUser = %s AND startDate <= '%s' AND endDate > '%s'",
+                $objUser->idUser,
+                MLCDateTime::Now(),
+                MLCDateTime::Now()
+            )
+        );
+
     	if($blnForceEnd){
     		foreach($arrSessions as $objSession){
     			self::EndSession($objSession);

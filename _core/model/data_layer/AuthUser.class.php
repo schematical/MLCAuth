@@ -1,7 +1,22 @@
 <?php
 require_once(__MLC_AUTH_DATA_LAYER__ . "/base_classes/AuthUserBase.class.php");
 class AuthUser extends AuthUserBase {
+    public static function QueryByUserSetting($strKey, $strValue){
 
+        $objSetting = AuthUserSetting::Query(
+            sprintf(
+                'WHERE namespace = "%s" AND data = "%s"',
+                $strKey,
+                $strValue
+            ),
+            true
+        );
+        if(is_null($objSetting)){
+           return null;
+        }
+        $objUser = AuthUser::LoadById($objSetting->IdUser);
+        return $objUser;
+    }
 	public function SetUserSetting($strKey, $strData){
         /*if(array_key_exists($strKey, $this->arrDBFields)){
             return $this->arrDBFields[$strKey] = $strData;
@@ -11,7 +26,8 @@ class AuthUser extends AuthUserBase {
 				'WHERE idUser = %s AND namespace = "%s"',
 				$this->IdUser,
 				$strKey
-			)
+			),
+            true
 		);
 		if(is_null($objSetting)){
 			$objSetting = new AuthUserSetting();
