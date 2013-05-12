@@ -110,6 +110,9 @@ class MLCSignUpPanelBase extends MJaxPanel{
         $this->lnkSignup->Text = 'Sign Up';
         $this->lnkSignup->AddAction($this, 'lnkSignup_click');
     }
+    public function MakeTwoCol(){
+        $this->strTemplate = __MLC_AUTH_CORE_VIEW__ . '/MLCSignUpPanel_twoCol.tpl.php';
+    }
 	public function lstReferal_change(){
 		if($this->lstReferal->SelectedValue != -1){
 			$this->txtReferalOther->Style->Display = 'none';
