@@ -97,14 +97,12 @@ class MLCShortSignUpPanel extends MJaxPanel{
 			($blnValid) &&
 			(!filter_var($strEmail, FILTER_VALIDATE_EMAIL))
 		){
-			error_log($strControlId . '----' . $this->txtUsername->ControlId);
-			if($strControlId != $this->txtUsername->ControlId){
-				$this->objForm->CtlAlert(
-					$this->txtEmail, 
-					"Email is not valid"
-				);
-				
-			}
+
+
+            $this->objForm->CtlAlert(
+                $this->txtEmail,
+                "Email is not valid"
+            );
 			$blnValid = false;
 		}
 		
