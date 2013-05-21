@@ -24,6 +24,7 @@ MLCApplicationBase::$arrClassFiles['MLCAuthDriver'] = __MLC_AUTH_CORE__ . '/MLCA
 	MLCApplicationBase::$arrClassFiles['MLCResetPasswordPanel'] = __MLC_AUTH_CORE_CTL__ . '/MLCResetPasswordPanel.class.php';
 	MLCApplicationBase::$arrClassFiles['MLCSignUpPanel'] = __MLC_AUTH_CORE_CTL__ . '/MLCSignUpPanel.class.php';
 	MLCApplicationBase::$arrClassFiles['MLCSignUpPanelBase'] = __MLC_AUTH_CORE_CTL__ . '/MLCSignUpPanelBase.class.php';
+    MLCApplicationBase::$arrClassFiles['MLCShortSignUpPanel'] = __MLC_AUTH_CORE_CTL__ . '/MLCShortSignUpPanel.class.php';
 
 //API
 MLCApplicationBase::$arrClassFiles['MLCApiAuthUser'] = __MLC_AUTH_CORE_API__ . '/MLCApiAuthUser.class.php';
