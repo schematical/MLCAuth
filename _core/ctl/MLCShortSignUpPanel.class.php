@@ -15,6 +15,8 @@ class MLCShortSignUpPanel extends MJaxPanel{
         parent::__construct($objParentControl, $strControlId);
         $this->strTemplate = __MLC_AUTH_CORE_VIEW__ . '/' . get_class($this) . '.tpl.php';
 		$this->CreateControls();
+         $this->objForm->SkipMainWindowRender = true;
+
     }
     public function CreateControls() {
 
@@ -31,7 +33,8 @@ class MLCShortSignUpPanel extends MJaxPanel{
 			new MJaxBlurEvent(),
 			new MJaxServerControlAction($this, 'txtEmail_blur')
 		);
-		
+        //$this->txtEmail->attr('tabindex', '1');
+
         $this->txtPassword1 = new MJaxTextBox($this, 'txtPassword1', array(
             "id" => "password1",
             "name" => "",
@@ -40,7 +43,7 @@ class MLCShortSignUpPanel extends MJaxPanel{
         ));
         $this->txtPassword1->Name = 'password1';
 		$this->txtPassword1->TextMode = MJaxTextMode::Password;
-		//$this->txtPassword1->attr('readonly', 'true');
+		//$this->txtPassword1->attr('tabindex', '2');
 		$this->txtPassword1->AddAction(
 			new MJaxBlurEvent(),
 			new MJaxServerControlAction($this, 'txtPassword1_blur')
@@ -59,6 +62,7 @@ class MLCShortSignUpPanel extends MJaxPanel{
 			new MJaxBlurEvent(),
 			new MJaxServerControlAction($this, 'txtPassword2_blur')
 		);
+        //$this->txtPassword2->attr('tabindex', '3');
 		
 
 
@@ -105,12 +109,13 @@ class MLCShortSignUpPanel extends MJaxPanel{
             );
 			$blnValid = false;
 		}
-		
+
         $strPassword1 = $this->txtPassword1->Text;
 		if(
 			($blnValid) &&
 			(strlen($strPassword1) < 6)
 		){
+            //_dv($strControlId  . '!=' .  $this->txtEmail->ControlId);
 			if($strControlId != $this->txtEmail->ControlId){
 				$this->objForm->CtlAlert(
 					$this->txtPassword1, 
@@ -119,13 +124,14 @@ class MLCShortSignUpPanel extends MJaxPanel{
 			}
 			$blnValid = false;
 		}
-		$this->txtPassword2->Attr('readonly', null);
+		//$this->txtPassword2->Attr('readonly', null);
 		$strPassword2 = $this->txtPassword2->Text;
 		if(
 			($blnValid) &&
 			($strPassword1 != $strPassword2)
 		){
-			if($strControlId = $this->txtPassword1->ControlId){
+
+			if($strControlId != $this->txtPassword1->ControlId){
 				$this->objForm->CtlAlert(
 					$this->txtPassword2, 
 					"Your passwords do not match"
