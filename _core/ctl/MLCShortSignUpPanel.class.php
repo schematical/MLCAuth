@@ -17,6 +17,7 @@ class MLCShortSignUpPanel extends MJaxPanel{
 		$this->CreateControls();
          $this->objForm->SkipMainWindowRender = true;
 
+
     }
     public function CreateControls() {
 
