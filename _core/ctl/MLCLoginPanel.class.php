@@ -22,26 +22,19 @@ class MLCLoginPanel extends MJaxPanel{
 		
         $this->txtEmail = new MJaxTextBox($this);
 		$this->txtEmail->Attr('placeholder','Email');
-		$this->txtEmail->AddCssClass('span2');
+		$this->txtEmail->AddCssClass('span3');
 		
         $this->txtPass = new MJaxTextBox($this);
         $this->txtPass->TextMode = MJaxTextMode::Password;
 		$this->txtPass->Attr('placeholder','Password');
         $this->txtPass->AddAction(new MJaxEnterKeyEvent(), new MJaxServerControlAction($this, 'btnSubmit_click'));
-		$this->txtPass->AddCssClass('span2');
+		$this->txtPass->AddCssClass('span3');
         
         $this->btnSubmit = new MJaxButton($this);
         $this->btnSubmit->AddAction(new MJaxClickEvent(), new MJaxServerControlAction($this, 'btnSubmit_click'));
 		$this->btnSubmit->Text = "Login";
 		$this->btnSubmit->AddCssClass('btn');
-		
-        //Forgotten Password Stuff
-        $this->btnForgotPass = new MJaxLinkButton($this);
-        $this->btnForgotPass->Text = "Click here to reset your password";
-        $this->btnForgotPass->AddAction(new MJaxClickEvent(), new MJaxServerControlAction($this, 'btnForgotPass_click'));
 
-        
-        $this->pnlForgotPass = new MLCForgotPassPanel($this);
     }
     public function btnSubmit_click($strFormId, $strControlId, $strActionParameter){
         $strEmail = $this->txtEmail->Text;
@@ -78,32 +71,5 @@ class MLCLoginPanel extends MJaxPanel{
 	
     }
 
-    public function btnForgotPass_click($strFormId, $strControlId, $strActionParameter){
-       	
-    }
-    /////////////////////////
-    // Public Properties: GET
-    /////////////////////////
-    public function __get($strName) {
-        switch ($strName) {
-            case "RedirectUrl": return $this->strRedirectUrl;
-            default: 
-            	return parent::__get($strName);
-               
-        }
-    }
-
-    /////////////////////////
-    // Public Properties: SET
-    /////////////////////////
-    public function __set($strName, $mixValue) {
-        switch ($strName) {
-            case "RedirectUrl":
-               return $this->strRedirectUrl = $mixValue;
-            default:
-               return parent::__set($strName, $mixValue);
-               
-        }
-    }
 }
 ?>
