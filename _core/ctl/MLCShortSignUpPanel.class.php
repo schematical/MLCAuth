@@ -22,8 +22,7 @@ class MLCShortSignUpPanel extends MJaxPanel{
     public function CreateControls() {
 
 		
-        $this->txtEmail = new MJaxTextBox($this, 'txtEmail', array(
-            "id" => "email",
+        $this->txtEmail = new MJaxTextBox($this, null, array(
             "name" => "",
             "type" => "email",
             "placeholder" => "Email"
@@ -36,8 +35,7 @@ class MLCShortSignUpPanel extends MJaxPanel{
 		);
         //$this->txtEmail->attr('tabindex', '1');
 
-        $this->txtPassword1 = new MJaxTextBox($this, 'txtPassword1', array(
-            "id" => "password1",
+        $this->txtPassword1 = new MJaxTextBox($this, null, array(
             "name" => "",
             "type" => "password",
             "placeholder" => "Password"
@@ -50,8 +48,7 @@ class MLCShortSignUpPanel extends MJaxPanel{
 			new MJaxServerControlAction($this, 'txtPassword1_blur')
 		);
 		
-        $this->txtPassword2 = new MJaxTextBox($this, 'txtPassword2', array(
-            "id" => "password2",
+        $this->txtPassword2 = new MJaxTextBox($this, null, array(
             "name" => "",
             "type" => "",
             "placeholder" => "Retype Password"
@@ -67,7 +64,7 @@ class MLCShortSignUpPanel extends MJaxPanel{
 		
 
 
-        $this->lnkSignup = new MJaxLinkButton($this, 'lnkSignup', array(
+        $this->lnkSignup = new MJaxLinkButton($this, null, array(
             "id" => "signup",
             "class" => "btn btn-large",
             "href" => "#"
