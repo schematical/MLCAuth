@@ -9,8 +9,8 @@ class MLCSignUpPanelBase extends MJaxPanel{
     public $txtPassword1 = null;
     public $txtPassword2 = null;
     public $txtCompanyname = null;
-	public $lstReferal = null;
-    public $txtReferalOther = null;
+	//public $lstReferal = null;
+    //public $txtReferalOther = null;
 
 	
     public $lnkSignup = null;
@@ -20,25 +20,25 @@ class MLCSignUpPanelBase extends MJaxPanel{
 		$this->CreateControls();
     }
     public function CreateControls() {
-        $this->lstReferal = new MJaxListBox($this, 'lstReferal', array(
+        /*$this->lstReferal = new MJaxListBox($this, 'lstReferal', array(
         ));
 		$this->lstReferal->AddItem('How did you hear about us?', null);
 		$this->lstReferal->AddItem('Other', -1);
 		$this->lstReferal->AddAction(
 			new MJaxChangeEvent(),
 			new MJaxServerControlAction($this, 'lstReferal_change')
-		);
+		);*/
        
 	   
 	   	$this->txtUsername = new MJaxTextBox($this, 'txtUsername', array(                        
-            "placeholder" => "Your Name"
+            "placeholder" => "Username"
         ));
 		
         $this->txtUsername->Name = 'Name';
-		$this->txtUsername->AddAction(
+		/*$this->txtUsername->AddAction(
 			new MJaxBlurEvent(),
 			new MJaxServerControlAction($this, 'txtUsername_blur')
-		);
+		);*/
 		
 		
         $this->txtEmail = new MJaxTextBox($this, 'txtEmail', array(
@@ -49,10 +49,10 @@ class MLCSignUpPanelBase extends MJaxPanel{
         ));
 		
         $this->txtEmail->Name = 'email';
-		$this->txtEmail->AddAction(
+		/*$this->txtEmail->AddAction(
 			new MJaxBlurEvent(),
 			new MJaxServerControlAction($this, 'txtEmail_blur')
-		);
+		);*/
 		
         $this->txtPassword1 = new MJaxTextBox($this, 'txtPassword1', array(
             "id" => "password1",
@@ -63,10 +63,10 @@ class MLCSignUpPanelBase extends MJaxPanel{
         $this->txtPassword1->Name = 'password1';
 		$this->txtPassword1->TextMode = MJaxTextMode::Password;
 		//$this->txtPassword1->attr('readonly', 'true');
-		$this->txtPassword1->AddAction(
+		/*$this->txtPassword1->AddAction(
 			new MJaxBlurEvent(),
 			new MJaxServerControlAction($this, 'txtPassword1_blur')
-		);
+		);*/
 		
         $this->txtPassword2 = new MJaxTextBox($this, 'txtPassword2', array(
             "id" => "password2",
@@ -77,10 +77,10 @@ class MLCSignUpPanelBase extends MJaxPanel{
 		//$this->txtPassword2->attr('readonly', 'true');
         $this->txtPassword2->Name = 'password2';
 		$this->txtPassword2->TextMode = MJaxTextMode::Password;
-		$this->txtPassword2->AddAction(
+		/*$this->txtPassword2->AddAction(
 			new MJaxBlurEvent(),
 			new MJaxServerControlAction($this, 'txtPassword2_blur')
-		);
+		);*/
 		
         $this->txtCompanyname = new MJaxTextBox($this, 'txtCompanyname', array(
             "id" => "companyname",
@@ -89,7 +89,7 @@ class MLCSignUpPanelBase extends MJaxPanel{
             "placeholder" => "Company Name"
         ));
         $this->txtCompanyname->Name = 'companyname';
-        $this->txtReferalOther = new MJaxTextBox($this, 'txtReferalOther', array(
+       /* $this->txtReferalOther = new MJaxTextBox($this, 'txtReferalOther', array(
             "id" => "referalOther",
             "name" => "",
             "type" => "",
@@ -97,8 +97,8 @@ class MLCSignUpPanelBase extends MJaxPanel{
         ));
 		$this->txtReferalOther->Style->Display = 'none';
         $this->txtReferalOther->Name = 'referalOther';
-		
 
+*/
         $this->lnkSignup = new MJaxLinkButton($this, 'lnkSignup', array(
             "id" => "signup",
             "class" => "btn btn-large",
@@ -113,13 +113,13 @@ class MLCSignUpPanelBase extends MJaxPanel{
     public function MakeTwoCol(){
         $this->strTemplate = __MLC_AUTH_CORE_VIEW__ . '/MLCSignUpPanel_twoCol.tpl.php';
     }
-	public function lstReferal_change(){
+	/*public function lstReferal_change(){
 		if($this->lstReferal->SelectedValue != -1){
 			$this->txtReferalOther->Style->Display = 'none';
 		}else{
 			$this->txtReferalOther->Style->Display = 'inline';
 		}
-	}
+	}*/
 	public function txtUsername_blur($strFormId, $strControlId){
 		$this->Validate($strControlId);
 	}
@@ -140,7 +140,7 @@ class MLCSignUpPanelBase extends MJaxPanel{
 		if(strlen($strUsername) < 2){
 			
 			$this->objForm->CtlAlert(
-				$this->txtUsername, 
+				$this->txtUsername->ControlId . '_holder',
 				"Username is not valid"
 			);
 			$blnValid = false;
@@ -152,10 +152,9 @@ class MLCSignUpPanelBase extends MJaxPanel{
 			($blnValid) &&
 			(!filter_var($strEmail, FILTER_VALIDATE_EMAIL))
 		){
-			error_log($strControlId . '----' . $this->txtUsername->ControlId);
 			if($strControlId != $this->txtUsername->ControlId){
 				$this->objForm->CtlAlert(
-					$this->txtEmail, 
+					$this->txtEmail->ControlId . '_holder',
 					"Email is not valid"
 				);
 				
@@ -170,7 +169,7 @@ class MLCSignUpPanelBase extends MJaxPanel{
 		){
 			if($strControlId != $this->txtEmail->ControlId){
 				$this->objForm->CtlAlert(
-					$this->txtPassword1, 
+					$this->txtPassword1->ControlId . '_holder',
 					"You need at least 6 charecters"
 				);
 			}
@@ -184,20 +183,20 @@ class MLCSignUpPanelBase extends MJaxPanel{
 		){
 			if($strControlId = $this->txtPassword1->ControlId){
 				$this->objForm->CtlAlert(
-					$this->txtPassword2, 
+					$this->txtPassword2->ControlId . '_holder',
 					"Your passwords do not match"
 				);
 			}
 			$blnValid = false;
 		}
 		
-		if(
+		/*if(
 			($blnValid) &&
 			is_null($this->lstReferal->SelectedValue)
 		){
 			$this->lstReferal->Alert("Please tell us how you heard of us");
 			$blnValid = false;
-		}		
+		}*/
 		return $blnValid;
         
 	}
@@ -236,8 +235,8 @@ class MLCSignUpPanelBase extends MJaxPanel{
     	$this->strTemplate = __MLC_AUTH_CORE_VIEW__ . '/' . get_class($this) . '_success.tpl.php';
 		$this->TriggerEvent('auth_signup');
     }
-	public function AddReferalItem($strDesc, $mixVal){
+	/*public function AddReferalItem($strDesc, $mixVal){
 		$this->lstReferal->AddItem($strDesc, $mixVal);
-	}
+	}*/
 }
 ?>

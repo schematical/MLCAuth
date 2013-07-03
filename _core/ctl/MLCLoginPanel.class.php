@@ -13,7 +13,7 @@ class MLCLoginPanel extends MJaxPanel{
     public $pnlForgotPass = null;
     public function __construct($objParentObject,$strControlId = null) {
         parent::__construct($objParentObject,$strControlId);
-        $this->strTemplate =  __MLC_AUTH_CORE_VIEW__ . '/' . get_class($this) . '.tpl.php';
+        $this->strTemplate =  __MLC_AUTH_CORE_VIEW__ . '/' . get_class($this) . '_hz.tpl.php';
 
         $this->AddCssClass('MLCLoginPanel');
 
@@ -49,7 +49,7 @@ class MLCLoginPanel extends MJaxPanel{
        
         $blnSuccess = MLCAuthDriver::Authenticate($strEmail, $strPassword);
         if($blnSuccess){
-        	
+           $this->TriggerEvent('auth_login');
            $this->divAlert->Text = "Success";
 			
 		   $this->objForm->Redirect($this->strRedirectUrl);
@@ -69,6 +69,26 @@ class MLCLoginPanel extends MJaxPanel{
             
         }
 	
+    }
+    public function __get($strName){
+        switch($strName){
+            case('RedirectUrl'):
+                 return $this->strRedirectUrl;
+            break;
+            default:
+                return parent::__get($strName);
+            break;
+        }
+    }
+    public function __set($strName, $mixValue){
+        switch($strName){
+            case('RedirectUrl'):
+                return $this->strRedirectUrl = $mixValue;
+                break;
+            default:
+                return parent::__set($strName, $mixValue);
+                break;
+        }
     }
 
 }

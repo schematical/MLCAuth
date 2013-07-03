@@ -8,3 +8,12 @@ class MJaxAuthSignupEvent extends MJaxEventBase{
         return '';        
     }
 }
+class MJaxAuthLoginEvent extends MJaxEventBase{
+    protected $strEventName = 'auth_login';
+    public function Render(){
+        return '';
+    }
+    public function RenderUnbind(){
+        return '';
+    }
+}
