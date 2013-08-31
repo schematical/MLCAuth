@@ -71,6 +71,7 @@ class MLCShortSignUpPanel extends MJaxPanel{
         ));
         $this->lnkSignup->Name = 'signup';
         $this->lnkSignup->AddCssClass('btn btn-large');
+        $this->lnkSignup->Style->Width = '90%';
 		$this->lnkSignup->AddCssClass('disabled');
         $this->lnkSignup->Text = 'Sign Up';
         $this->lnkSignup->AddAction($this, 'lnkSignup_click');

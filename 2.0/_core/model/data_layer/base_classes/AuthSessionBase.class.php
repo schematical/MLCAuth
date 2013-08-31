@@ -17,6 +17,7 @@
 * - LoadSingleByField()
 * - LoadArrayByField()
 * - __toArray()
+* - __toString()
 * - __toJson()
 * - __get()
 * - __set()
@@ -112,7 +113,7 @@ class AuthSessionBase extends BaseEntity {
     //Load by foregin key
     public static function LoadCollByIdUser($intIdUser) {
         $sql = sprintf("SELECT * FROM AuthSession WHERE idUser = %s;", $intIdUser);
-        $result = MLCDBDriver::Query($sql);
+        $result = MLCDBDriver::Query($sql, self::DB_CONN);
         $coll = new BaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $objAuthSession = new AuthSession();
@@ -149,7 +150,7 @@ class AuthSessionBase extends BaseEntity {
         } elseif (is_null($mixData)) {
             return null;
         } else {
-            throw new Exception(__FUNCTION__ . '->Parse - Parameter 1 must be either an intiger or a class type "AuthSession"');
+            throw new Exception(__FUNCTION__ . ' - Parameter 1 must be either an intiger or a class type "AuthSession"');
         }
     }
     public static function LoadSingleByField($strField, $mixValue, $strCompairison = '=') {
@@ -180,7 +181,7 @@ class AuthSessionBase extends BaseEntity {
     }
     public function __toArray() {
         $arrReturn = array();
-        $arrReturn['_ClassName'] = "AuthSession";
+        $arrReturn['_ClassName'] = "AuthSession %>";
         $arrReturn['idSession'] = $this->idSession;
         $arrReturn['startDate'] = $this->startDate;
         $arrReturn['endDate'] = $this->endDate;
@@ -188,6 +189,9 @@ class AuthSessionBase extends BaseEntity {
         $arrReturn['sessionKey'] = $this->sessionKey;
         $arrReturn['ipAddress'] = $this->ipAddress;
         return $arrReturn;
+    }
+    public function __toString() {
+        return 'AuthSession(' . $this->getId() . ')';
     }
     public function __toJson($blnPosponeEncode = false) {
         $arrReturn = $this->__toArray();
@@ -241,42 +245,49 @@ class AuthSessionBase extends BaseEntity {
                 }
                 return null;
             break;
-                defualt:
-                    throw new Exception('No property with name "' . $strName . '" exists in class ". get_class($this) . "');
-                break;
-            }
-        }
-        public function __set($strName, $strValue) {
-            $this->modified = 1;
-            switch ($strName) {
-                case ('IdSession'):
-                case ('idSession'):
-                    $this->arrDBFields['idSession'] = $strValue;
-                break;
-                case ('StartDate'):
-                case ('startDate'):
-                    $this->arrDBFields['startDate'] = $strValue;
-                break;
-                case ('EndDate'):
-                case ('endDate'):
-                    $this->arrDBFields['endDate'] = $strValue;
-                break;
-                case ('IdUser'):
-                case ('idUser'):
-                    $this->arrDBFields['idUser'] = $strValue;
-                break;
-                case ('SessionKey'):
-                case ('sessionKey'):
-                    $this->arrDBFields['sessionKey'] = $strValue;
-                break;
-                case ('IpAddress'):
-                case ('ipAddress'):
-                    $this->arrDBFields['ipAddress'] = $strValue;
-                break;
-                    defualt:
-                        throw new Exception('No property with name "' . $strName . '" exists in class ". get_class($this) . "');
-                    break;
+            case ('IdUserObject'):
+            case ('idUserObject'):
+                if ((array_key_exists('idUser', $this->arrDBFields)) && (!is_null($this->arrDBFields['idUser']))) {
+                    return AuthUser::LoadById($this->arrDBFields['idUser']);
                 }
-            }
+                return null;
+            break;
+            default:
+                throw new MLCMissingPropertyException($this, $strName);
+            break;
         }
+    }
+    public function __set($strName, $strValue) {
+        $this->modified = 1;
+        switch ($strName) {
+            case ('IdSession'):
+            case ('idSession'):
+                $this->arrDBFields['idSession'] = $strValue;
+            break;
+            case ('StartDate'):
+            case ('startDate'):
+                $this->arrDBFields['startDate'] = $strValue;
+            break;
+            case ('EndDate'):
+            case ('endDate'):
+                $this->arrDBFields['endDate'] = $strValue;
+            break;
+            case ('IdUser'):
+            case ('idUser'):
+                $this->arrDBFields['idUser'] = $strValue;
+            break;
+            case ('SessionKey'):
+            case ('sessionKey'):
+                $this->arrDBFields['sessionKey'] = $strValue;
+            break;
+            case ('IpAddress'):
+            case ('ipAddress'):
+                $this->arrDBFields['ipAddress'] = $strValue;
+            break;
+            default:
+                throw new MLCMissingPropertyException($this, $strName);
+            break;
+        }
+    }
+}
 ?>

@@ -26,7 +26,7 @@ class MLCAuthDriver{
     
     /**
      *
-     * Creates a new user 
+     * Creates a new user
      *
      * @param <String> $strEmail
      * @param <String> $strPassword
@@ -57,7 +57,7 @@ class MLCAuthDriver{
 		}
 		$objNUser->Save();
 		self::$objUser = $objNUser;
-		
+		self::UpdatePendingInvites($objNUser);
         return $objNUser;
     }
 
@@ -307,7 +307,7 @@ class MLCAuthDriver{
     	}
 	}
     public static function AddRoll($strRollType, $objEntity){
-        self::User()->AddRoll($strRollType, $objEntity);
+        return self::User()->AddRoll($strRollType, $objEntity);
     }
     public static function GetRolls($strRollType = null, $objUser = null){
         if(is_null($objUser)){
@@ -330,15 +330,18 @@ class MLCAuthDriver{
         return $arrRolls;
 
     }
-    public static function GetRollByEntity(BaseEntity $objEntity, $strRollType = null){
+    public static function GetRollByEntity(BaseEntity $objEntity, $strRollType = null, $blnAllowInvites = false){
         $strQuery = sprintf(
             'WHERE idAuthUser = %s AND idEntity = %s AND entityType = "%s"',
-            $objEntity->getPKey(),
-            get_class($objEntity),
-            self::IdUser()
+            self::IdUser(),
+            $objEntity->getId(),
+            get_class($objEntity)
         );
         if(is_null($strRollType)){
             $strQuery .= sprintf(' AND rollType = "%s"', $strRollType);
+        }
+        if(!$blnAllowInvites){
+            $strQuery .= ' AND idAuthUser IS NOT NULL ';
         }
         $objRoll =  AuthRoll::Query(
             $strQuery,
@@ -348,23 +351,93 @@ class MLCAuthDriver{
 
     }
     public static function GetUsersByEntity(BaseEntity $objEntity, $strRollType = null){
-        //load rolls by idAuthUser
-        $strQuery = sprintf(
-            'WHERE entityType = "%s" AND idEntity = %s',
-            get_class($objEntity),
-            $objEntity->getId()
-        );
-        if(!is_null($strRollType)){
-            $strQuery .= sprintf(' AND rollType = "%s"', $strRollType);
-        }
-        $arrRolls =  AuthRoll::Query(
-            $strQuery
-        );
+
+        $arrRolls =  self::GetRollByEntity($objEntity, $strRollType);
         $arrUsers = array();
         foreach($arrRolls as $intIndex => $objRoll){
             $arrUsers[] = AuthUser::LoadById($objRoll->IdUser);
         }
         return $arrUsers;
+    }
+    public static function IniviteUserToRoll($mixUser, $objEntity, $strRollType){
+        $objUser = null;
+        $blnValidEmail = false;
+        if(
+            (is_object($mixUser)) &&
+            ($mixUser instanceof AuthUser)
+        ){
+            $objUser = $mixUser;
+        }elseif(
+            (is_string($mixUser)) &&
+            (filter_var($mixUser, FILTER_VALIDATE_EMAIL))
+        ){
+            $blnValidEmail = true;
+            $objUser = AuthUser::LoadSingleByField('email', $mixUser);
+        }
+        if(!is_null($objUser)){
+            //Just add the roll
+            return $objUser->AddRoll($strRollType, $objEntity);
+        }elseif(!$blnValidEmail){
+            throw new Exception("Not a valid email address");
+        }else{
+
+            $objRoll = AuthRoll::Query(
+                sprintf(
+                    ' WHERE email = "%s" AND idEntity = %s AND entityType = %s AND rollType = "%s"',
+                    $mixUser,
+                    $objEntity->getId(),
+                    get_class($objEntity),
+                    $strRollType
+                ),
+                true
+            );
+            if(is_null($objRoll)){
+                $objRoll = new AuthRoll();
+            }
+            $objRoll->SetEntity($objEntity);
+            $objRoll->RollType = $strRollType;
+            $objRoll->CreDate = MLCDateTime::Now();
+            $objRoll->InviteEmail = $mixUser;
+            $objRoll->InviteToken = md5('pepper' + rand(0,9999) + 'salt') . '-' . time();
+            $objRoll->IdInviteUser = self::IdUser();
+            $objRoll->Save();
+            return $objRoll;
+        }
+    }
+    public function UpdatePendingInvites($mixUser = null){
+        $arrRolls = null;
+        $strField = 'inviteEmail';
+        if(is_null($mixUser)){
+            if(is_string($mixUser)){
+                $strOldEmail = $mixUser;
+                if(!filter_var($mixUser, FILTER_VALIDATE_EMAIL)){
+                    $strField = 'inviteToken';
+                }
+            }elseif(is_object($mixUser)){
+                if($mixUser instanceof AuthUser){
+                    $strOldEmail = $mixUser->Email;
+                }elseif($mixUser instanceof AuthRoll){
+                    $arrRolls = array($mixUser);
+                }else{
+                    throw new MLCWrongTypeException('UpdatePendingInvites', $mixUser);
+                }
+            }
+        }
+        if(is_null($arrRolls)){
+            //load rolls w/o user by email
+            $arrRolls = AuthRoll::Query(
+                sptrintf(
+                    'WHERE %s = "%s" AND idAuthUser IS NULL',
+                    $strField,
+                    $strOldEmail
+                )
+            );
+        }
+        foreach($arrRolls as $intIndex => $objRoll){
+            $objRoll->IdUser = self::IdUser();
+            $objRoll->Save();
+        }
+
     }
 
     

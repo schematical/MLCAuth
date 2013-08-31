@@ -1,3 +1,4 @@
+<div class='span10 offset1'>
 			<div class="control-group">
               <label for="textinput1">
               </label>
@@ -14,3 +15,4 @@
 
 
             <?php $_CONTROL->lnkSignup->Render(); ?>
+</div>

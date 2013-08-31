@@ -72,6 +72,27 @@ class AuthUser extends AuthUserBase {
         $objRoll->Save();
         return $objRoll;
     }
+    public function HasRoll($objEntity, $strRollType){
+        if(count($this->GetUserRollByEntity($objEntity, $strRollType) > 0)){
+            return true;
+        }
+        return false;
+    }
+    public function GetUserRollByEntity($objEntity, $strRollType = null){
+        $strQuery = sprintf(
+            'WHERE entityType = "%s" AND idEntity = %s AND idAuthUser = %s',
+            get_class($objEntity),
+            $objEntity->getId(),
+            $this->getId()
+        );
+        if(!is_null($strRollType)){
+            $strQuery .= sprintf(' AND rollType = "%s"', $strRollType);
+        }
+        $arrRolls =  AuthRoll::Query(
+            $strQuery
+        );
+        return $arrRolls;
+    }
 }
 
 

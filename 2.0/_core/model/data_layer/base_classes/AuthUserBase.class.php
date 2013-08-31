@@ -8,10 +8,9 @@
 * - ToXml()
 * - Query()
 * - QueryCount()
-* - GetAuthAccountArr()
 * - GetAuthSessionArr()
 * - GetAuthUserSettingArr()
-* - LoadCollByIdAccount()
+* - GetMLCNotificationArr()
 * - LoadByTag()
 * - AddTag()
 * - ParseArray()
@@ -19,6 +18,7 @@
 * - LoadSingleByField()
 * - LoadArrayByField()
 * - __toArray()
+* - __toString()
 * - __toJson()
 * - __get()
 * - __set()
@@ -78,9 +78,24 @@ class AuthUserBase extends BaseEntity {
         $xmlStr.= "<passResetCode>";
         $xmlStr.= $this->passResetCode;
         $xmlStr.= "</passResetCode>";
+        $xmlStr.= "<fbuid>";
+        $xmlStr.= $this->fbuid;
+        $xmlStr.= "</fbuid>";
+        $xmlStr.= "<fbAccessToken>";
+        $xmlStr.= $this->fbAccessToken;
+        $xmlStr.= "</fbAccessToken>";
         $xmlStr.= "<active>";
         $xmlStr.= $this->active;
         $xmlStr.= "</active>";
+        $xmlStr.= "<friendsIds>";
+        $xmlStr.= $this->friendsIds;
+        $xmlStr.= "</friendsIds>";
+        $xmlStr.= "<friendsUpdated>";
+        $xmlStr.= $this->friendsUpdated;
+        $xmlStr.= "</friendsUpdated>";
+        $xmlStr.= "<fbAccessTokenExpires>";
+        $xmlStr.= $this->fbAccessTokenExpires;
+        $xmlStr.= "</fbAccessTokenExpires>";
         if ($blnReclusive) {
             //Finish FK Rel stuff
             
@@ -114,27 +129,16 @@ class AuthUserBase extends BaseEntity {
         return mysql_num_rows($result);
     }
     //Get children
-    public function GetAuthAccountArr() {
-        return AuthAccount::LoadCollByIdUser($this->idUser);
-    }
     public function GetAuthSessionArr() {
         return AuthSession::LoadCollByIdUser($this->idUser);
     }
     public function GetAuthUserSettingArr() {
         return AuthUserSetting::LoadCollByIdUser($this->idUser);
     }
-    //Load by foregin key
-    public static function LoadCollByIdAccount($intIdAccount) {
-        $sql = sprintf("SELECT * FROM AuthUser WHERE idAccount = %s;", $intIdAccount);
-        $result = MLCDBDriver::Query($sql);
-        $coll = new BaseEntityCollection();
-        while ($data = mysql_fetch_assoc($result)) {
-            $objAuthUser = new AuthUser();
-            $objAuthUser->materilize($data);
-            $coll->addItem($objAuthUser);
-        }
-        return $coll;
+    public function GetMLCNotificationArr() {
+        return MLCNotification::LoadCollByIdUser($this->idUser);
     }
+    //Load by foregin key
     public function LoadByTag($strTag) {
         return MLCTagDriver::LoadTaggedEntites($strTag, get_class($this));
     }
@@ -169,7 +173,7 @@ class AuthUserBase extends BaseEntity {
         } elseif (is_null($mixData)) {
             return null;
         } else {
-            throw new Exception(__FUNCTION__ . '->Parse - Parameter 1 must be either an intiger or a class type "AuthUser"');
+            throw new Exception(__FUNCTION__ . ' - Parameter 1 must be either an intiger or a class type "AuthUser"');
         }
     }
     public static function LoadSingleByField($strField, $mixValue, $strCompairison = '=') {
@@ -200,7 +204,7 @@ class AuthUserBase extends BaseEntity {
     }
     public function __toArray() {
         $arrReturn = array();
-        $arrReturn['_ClassName'] = "AuthUser";
+        $arrReturn['_ClassName'] = "AuthUser %>";
         $arrReturn['idUser'] = $this->idUser;
         $arrReturn['email'] = $this->email;
         $arrReturn['password'] = $this->password;
@@ -208,8 +212,16 @@ class AuthUserBase extends BaseEntity {
         $arrReturn['idUserTypeCd'] = $this->idUserTypeCd;
         $arrReturn['username'] = $this->username;
         $arrReturn['passResetCode'] = $this->passResetCode;
+        $arrReturn['fbuid'] = $this->fbuid;
+        $arrReturn['fbAccessToken'] = $this->fbAccessToken;
         $arrReturn['active'] = $this->active;
+        $arrReturn['friendsIds'] = $this->friendsIds;
+        $arrReturn['friendsUpdated'] = $this->friendsUpdated;
+        $arrReturn['fbAccessTokenExpires'] = $this->fbAccessTokenExpires;
         return $arrReturn;
+    }
+    public function __toString() {
+        return 'AuthUser(' . $this->getId() . ')';
     }
     public function __toJson($blnPosponeEncode = false) {
         $arrReturn = $this->__toArray();
@@ -270,6 +282,20 @@ class AuthUserBase extends BaseEntity {
                 }
                 return null;
             break;
+            case ('Fbuid'):
+            case ('fbuid'):
+                if (array_key_exists('fbuid', $this->arrDBFields)) {
+                    return $this->arrDBFields['fbuid'];
+                }
+                return null;
+            break;
+            case ('FbAccessToken'):
+            case ('fbAccessToken'):
+                if (array_key_exists('fbAccessToken', $this->arrDBFields)) {
+                    return $this->arrDBFields['fbAccessToken'];
+                }
+                return null;
+            break;
             case ('Active'):
             case ('active'):
                 if (array_key_exists('active', $this->arrDBFields)) {
@@ -277,50 +303,91 @@ class AuthUserBase extends BaseEntity {
                 }
                 return null;
             break;
-                defualt:
-                    throw new Exception('No property with name "' . $strName . '" exists in class ". get_class($this) . "');
-                break;
-            }
-        }
-        public function __set($strName, $strValue) {
-            $this->modified = 1;
-            switch ($strName) {
-                case ('IdUser'):
-                case ('idUser'):
-                    $this->arrDBFields['idUser'] = $strValue;
-                break;
-                case ('Email'):
-                case ('email'):
-                    $this->arrDBFields['email'] = $strValue;
-                break;
-                case ('Password'):
-                case ('password'):
-                    $this->arrDBFields['password'] = $strValue;
-                break;
-                case ('IdAccount'):
-                case ('idAccount'):
-                    $this->arrDBFields['idAccount'] = $strValue;
-                break;
-                case ('IdUserTypeCd'):
-                case ('idUserTypeCd'):
-                    $this->arrDBFields['idUserTypeCd'] = $strValue;
-                break;
-                case ('Username'):
-                case ('username'):
-                    $this->arrDBFields['username'] = $strValue;
-                break;
-                case ('PassResetCode'):
-                case ('passResetCode'):
-                    $this->arrDBFields['passResetCode'] = $strValue;
-                break;
-                case ('Active'):
-                case ('active'):
-                    $this->arrDBFields['active'] = $strValue;
-                break;
-                    defualt:
-                        throw new Exception('No property with name "' . $strName . '" exists in class ". get_class($this) . "');
-                    break;
+            case ('FriendsIds'):
+            case ('friendsIds'):
+                if (array_key_exists('friendsIds', $this->arrDBFields)) {
+                    return $this->arrDBFields['friendsIds'];
                 }
-            }
+                return null;
+            break;
+            case ('FriendsUpdated'):
+            case ('friendsUpdated'):
+                if (array_key_exists('friendsUpdated', $this->arrDBFields)) {
+                    return $this->arrDBFields['friendsUpdated'];
+                }
+                return null;
+            break;
+            case ('FbAccessTokenExpires'):
+            case ('fbAccessTokenExpires'):
+                if (array_key_exists('fbAccessTokenExpires', $this->arrDBFields)) {
+                    return $this->arrDBFields['fbAccessTokenExpires'];
+                }
+                return null;
+            break;
+            default:
+                throw new MLCMissingPropertyException($this, $strName);
+            break;
         }
+    }
+    public function __set($strName, $strValue) {
+        $this->modified = 1;
+        switch ($strName) {
+            case ('IdUser'):
+            case ('idUser'):
+                $this->arrDBFields['idUser'] = $strValue;
+            break;
+            case ('Email'):
+            case ('email'):
+                $this->arrDBFields['email'] = $strValue;
+            break;
+            case ('Password'):
+            case ('password'):
+                $this->arrDBFields['password'] = $strValue;
+            break;
+            case ('IdAccount'):
+            case ('idAccount'):
+                $this->arrDBFields['idAccount'] = $strValue;
+            break;
+            case ('IdUserTypeCd'):
+            case ('idUserTypeCd'):
+                $this->arrDBFields['idUserTypeCd'] = $strValue;
+            break;
+            case ('Username'):
+            case ('username'):
+                $this->arrDBFields['username'] = $strValue;
+            break;
+            case ('PassResetCode'):
+            case ('passResetCode'):
+                $this->arrDBFields['passResetCode'] = $strValue;
+            break;
+            case ('Fbuid'):
+            case ('fbuid'):
+                $this->arrDBFields['fbuid'] = $strValue;
+            break;
+            case ('FbAccessToken'):
+            case ('fbAccessToken'):
+                $this->arrDBFields['fbAccessToken'] = $strValue;
+            break;
+            case ('Active'):
+            case ('active'):
+                $this->arrDBFields['active'] = $strValue;
+            break;
+            case ('FriendsIds'):
+            case ('friendsIds'):
+                $this->arrDBFields['friendsIds'] = $strValue;
+            break;
+            case ('FriendsUpdated'):
+            case ('friendsUpdated'):
+                $this->arrDBFields['friendsUpdated'] = $strValue;
+            break;
+            case ('FbAccessTokenExpires'):
+            case ('fbAccessTokenExpires'):
+                $this->arrDBFields['fbAccessTokenExpires'] = $strValue;
+            break;
+            default:
+                throw new MLCMissingPropertyException($this, $strName);
+            break;
+        }
+    }
+}
 ?>

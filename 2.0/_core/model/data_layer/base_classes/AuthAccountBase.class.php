@@ -8,8 +8,7 @@
 * - ToXml()
 * - Query()
 * - QueryCount()
-* - GetAuthUserArr()
-* - LoadCollByIdUser()
+* - GetMLCLocationArr()
 * - LoadByTag()
 * - AddTag()
 * - ParseArray()
@@ -17,6 +16,7 @@
 * - LoadSingleByField()
 * - LoadArrayByField()
 * - __toArray()
+* - __toString()
 * - __toJson()
 * - __get()
 * - __set()
@@ -61,15 +61,15 @@ class AuthAccountBase extends BaseEntity {
         $xmlStr.= "<idAccountTypeCd>";
         $xmlStr.= $this->idAccountTypeCd;
         $xmlStr.= "</idAccountTypeCd>";
-        $xmlStr.= "<shortDesc>";
-        $xmlStr.= $this->shortDesc;
-        $xmlStr.= "</shortDesc>";
-        $xmlStr.= "<creDate>";
-        $xmlStr.= $this->creDate;
-        $xmlStr.= "</creDate>";
         $xmlStr.= "<idUser>";
         $xmlStr.= $this->idUser;
         $xmlStr.= "</idUser>";
+        $xmlStr.= "<creDate>";
+        $xmlStr.= $this->creDate;
+        $xmlStr.= "</creDate>";
+        $xmlStr.= "<shortDesc>";
+        $xmlStr.= $this->shortDesc;
+        $xmlStr.= "</shortDesc>";
         if ($blnReclusive) {
             //Finish FK Rel stuff
             
@@ -103,21 +103,10 @@ class AuthAccountBase extends BaseEntity {
         return mysql_num_rows($result);
     }
     //Get children
-    public function GetAuthUserArr() {
-        return AuthUser::LoadCollByIdAccount($this->idAccount);
+    public function GetMLCLocationArr() {
+        return MLCLocation::LoadCollByIdAccount($this->idAccount);
     }
     //Load by foregin key
-    public static function LoadCollByIdUser($intIdUser) {
-        $sql = sprintf("SELECT * FROM AuthAccount WHERE idUser = %s;", $intIdUser);
-        $result = MLCDBDriver::Query($sql);
-        $coll = new BaseEntityCollection();
-        while ($data = mysql_fetch_assoc($result)) {
-            $objAuthAccount = new AuthAccount();
-            $objAuthAccount->materilize($data);
-            $coll->addItem($objAuthAccount);
-        }
-        return $coll;
-    }
     public function LoadByTag($strTag) {
         return MLCTagDriver::LoadTaggedEntites($strTag, get_class($this));
     }
@@ -146,7 +135,7 @@ class AuthAccountBase extends BaseEntity {
         } elseif (is_null($mixData)) {
             return null;
         } else {
-            throw new Exception(__FUNCTION__ . '->Parse - Parameter 1 must be either an intiger or a class type "AuthAccount"');
+            throw new Exception(__FUNCTION__ . ' - Parameter 1 must be either an intiger or a class type "AuthAccount"');
         }
     }
     public static function LoadSingleByField($strField, $mixValue, $strCompairison = '=') {
@@ -177,13 +166,16 @@ class AuthAccountBase extends BaseEntity {
     }
     public function __toArray() {
         $arrReturn = array();
-        $arrReturn['_ClassName'] = "AuthAccount";
+        $arrReturn['_ClassName'] = "AuthAccount %>";
         $arrReturn['idAccount'] = $this->idAccount;
         $arrReturn['idAccountTypeCd'] = $this->idAccountTypeCd;
-        $arrReturn['shortDesc'] = $this->shortDesc;
-        $arrReturn['creDate'] = $this->creDate;
         $arrReturn['idUser'] = $this->idUser;
+        $arrReturn['creDate'] = $this->creDate;
+        $arrReturn['shortDesc'] = $this->shortDesc;
         return $arrReturn;
+    }
+    public function __toString() {
+        return 'AuthAccount(' . $this->getId() . ')';
     }
     public function __toJson($blnPosponeEncode = false) {
         $arrReturn = $this->__toArray();
@@ -209,10 +201,10 @@ class AuthAccountBase extends BaseEntity {
                 }
                 return null;
             break;
-            case ('ShortDesc'):
-            case ('shortDesc'):
-                if (array_key_exists('shortDesc', $this->arrDBFields)) {
-                    return $this->arrDBFields['shortDesc'];
+            case ('IdUser'):
+            case ('idUser'):
+                if (array_key_exists('idUser', $this->arrDBFields)) {
+                    return $this->arrDBFields['idUser'];
                 }
                 return null;
             break;
@@ -223,45 +215,45 @@ class AuthAccountBase extends BaseEntity {
                 }
                 return null;
             break;
-            case ('IdUser'):
-            case ('idUser'):
-                if (array_key_exists('idUser', $this->arrDBFields)) {
-                    return $this->arrDBFields['idUser'];
+            case ('ShortDesc'):
+            case ('shortDesc'):
+                if (array_key_exists('shortDesc', $this->arrDBFields)) {
+                    return $this->arrDBFields['shortDesc'];
                 }
                 return null;
             break;
-                defualt:
-                    throw new Exception('No property with name "' . $strName . '" exists in class ". get_class($this) . "');
-                break;
-            }
+            default:
+                throw new MLCMissingPropertyException($this, $strName);
+            break;
         }
-        public function __set($strName, $strValue) {
-            $this->modified = 1;
-            switch ($strName) {
-                case ('IdAccount'):
-                case ('idAccount'):
-                    $this->arrDBFields['idAccount'] = $strValue;
-                break;
-                case ('IdAccountTypeCd'):
-                case ('idAccountTypeCd'):
-                    $this->arrDBFields['idAccountTypeCd'] = $strValue;
-                break;
-                case ('ShortDesc'):
-                case ('shortDesc'):
-                    $this->arrDBFields['shortDesc'] = $strValue;
-                break;
-                case ('CreDate'):
-                case ('creDate'):
-                    $this->arrDBFields['creDate'] = $strValue;
-                break;
-                case ('IdUser'):
-                case ('idUser'):
-                    $this->arrDBFields['idUser'] = $strValue;
-                break;
-                    defualt:
-                        throw new Exception('No property with name "' . $strName . '" exists in class ". get_class($this) . "');
-                    break;
-                }
-            }
+    }
+    public function __set($strName, $strValue) {
+        $this->modified = 1;
+        switch ($strName) {
+            case ('IdAccount'):
+            case ('idAccount'):
+                $this->arrDBFields['idAccount'] = $strValue;
+            break;
+            case ('IdAccountTypeCd'):
+            case ('idAccountTypeCd'):
+                $this->arrDBFields['idAccountTypeCd'] = $strValue;
+            break;
+            case ('IdUser'):
+            case ('idUser'):
+                $this->arrDBFields['idUser'] = $strValue;
+            break;
+            case ('CreDate'):
+            case ('creDate'):
+                $this->arrDBFields['creDate'] = $strValue;
+            break;
+            case ('ShortDesc'):
+            case ('shortDesc'):
+                $this->arrDBFields['shortDesc'] = $strValue;
+            break;
+            default:
+                throw new MLCMissingPropertyException($this, $strName);
+            break;
         }
+    }
+}
 ?>

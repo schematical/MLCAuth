@@ -7,4 +7,5 @@ abstract class MLCAuthQS{
     const email = 'email';
     const password = 'password';
     const session = 'session';
+    const invite_token = 'mlcauthtoken';
 }

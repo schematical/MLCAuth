@@ -11,12 +11,20 @@ class MLCSignUpPanelBase extends MJaxPanel{
     public $txtCompanyname = null;
 	//public $lstReferal = null;
     //public $txtReferalOther = null;
+    public $objInviteRoll = null;
 
 	
     public $lnkSignup = null;
 	 public function __construct($objParentControl, $strControlId = null) {
         parent::__construct($objParentControl, $strControlId);
         $this->strTemplate = __MLC_AUTH_CORE_VIEW__ . '/' . get_class($this) . '.tpl.php';
+        $this->objInviteRoll = AuthRoll::Query(
+            sprintf(
+                'WHERE inviteToken = "%s" AND idAuthUser IS NULL',
+                MLCApplication::QS(MLCAuthQS::invite_token)
+            ),
+            true
+        );
 		$this->CreateControls();
     }
     public function CreateControls() {
@@ -47,6 +55,9 @@ class MLCSignUpPanelBase extends MJaxPanel{
             "type" => "email",
             "placeholder" => "Email"
         ));
+        if(!is_null($this->objInviteRoll)){
+            $this->txtEmail->Text = $this->objInviteRoll->InviteEmail;
+        }
 		
         $this->txtEmail->Name = 'email';
 		/*$this->txtEmail->AddAction(
@@ -231,6 +242,9 @@ class MLCSignUpPanelBase extends MJaxPanel{
 			);
 			return false;
     	}
+        if(!is_null($this->objInviteRoll)){
+            MLCAuthDriver::UpdatePendingInvites($this->objInviteRoll);
+        }
 		$this->blnModified = true;
     	$this->strTemplate = __MLC_AUTH_CORE_VIEW__ . '/' . get_class($this) . '_success.tpl.php';
 		$this->TriggerEvent('auth_signup');

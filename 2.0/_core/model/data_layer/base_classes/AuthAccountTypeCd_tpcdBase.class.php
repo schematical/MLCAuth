@@ -15,6 +15,7 @@
 * - LoadSingleByField()
 * - LoadArrayByField()
 * - __toArray()
+* - __toString()
 * - __toJson()
 * - __get()
 * - __set()
@@ -118,7 +119,7 @@ class AuthAccountTypeCd_tpcdBase extends BaseEntity {
         } elseif (is_null($mixData)) {
             return null;
         } else {
-            throw new Exception(__FUNCTION__ . '->Parse - Parameter 1 must be either an intiger or a class type "AuthAccountTypeCd_tpcd"');
+            throw new Exception(__FUNCTION__ . ' - Parameter 1 must be either an intiger or a class type "AuthAccountTypeCd_tpcd"');
         }
     }
     public static function LoadSingleByField($strField, $mixValue, $strCompairison = '=') {
@@ -149,10 +150,13 @@ class AuthAccountTypeCd_tpcdBase extends BaseEntity {
     }
     public function __toArray() {
         $arrReturn = array();
-        $arrReturn['_ClassName'] = "AuthAccountTypeCd_tpcd";
+        $arrReturn['_ClassName'] = "AuthAccountTypeCd_tpcd %>";
         $arrReturn['idAccountTypeCd'] = $this->idAccountTypeCd;
         $arrReturn['shortDesc'] = $this->shortDesc;
         return $arrReturn;
+    }
+    public function __toString() {
+        return 'AuthAccountTypeCd_tpcd(' . $this->getId() . ')';
     }
     public function __toJson($blnPosponeEncode = false) {
         $arrReturn = $this->__toArray();
@@ -178,26 +182,26 @@ class AuthAccountTypeCd_tpcdBase extends BaseEntity {
                 }
                 return null;
             break;
-                defualt:
-                    throw new Exception('No property with name "' . $strName . '" exists in class ". get_class($this) . "');
-                break;
-            }
+            default:
+                throw new MLCMissingPropertyException($this, $strName);
+            break;
         }
-        public function __set($strName, $strValue) {
-            $this->modified = 1;
-            switch ($strName) {
-                case ('IdAccountTypeCd'):
-                case ('idAccountTypeCd'):
-                    $this->arrDBFields['idAccountTypeCd'] = $strValue;
-                break;
-                case ('ShortDesc'):
-                case ('shortDesc'):
-                    $this->arrDBFields['shortDesc'] = $strValue;
-                break;
-                    defualt:
-                        throw new Exception('No property with name "' . $strName . '" exists in class ". get_class($this) . "');
-                    break;
-                }
-            }
+    }
+    public function __set($strName, $strValue) {
+        $this->modified = 1;
+        switch ($strName) {
+            case ('IdAccountTypeCd'):
+            case ('idAccountTypeCd'):
+                $this->arrDBFields['idAccountTypeCd'] = $strValue;
+            break;
+            case ('ShortDesc'):
+            case ('shortDesc'):
+                $this->arrDBFields['shortDesc'] = $strValue;
+            break;
+            default:
+                throw new MLCMissingPropertyException($this, $strName);
+            break;
         }
+    }
+}
 ?>
