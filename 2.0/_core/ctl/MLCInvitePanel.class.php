@@ -33,11 +33,18 @@ class MLCInvitePanel extends MJaxPanel{
             return $this->txtEmail->Alert('Invalid email address');
         }
 
-        MLCAuthDriver::IniviteUserToRoll(
+        $objRoll = MLCAuthDriver::IniviteUserToRoll(
             $strEmail,
             $this->objEntity,
             $this->strRollType
         );
+        if(!is_null($objRoll)){
+            $this->txtEmail->Alert("Invite Sent!", 'success');
+            $this->TriggerEvent('mjax-success');
+        }else{
+            $this->txtEmail->Alert("Invite Failed!", 'error');
+            $this->TriggerEvent('mjax-error');
+        }
     }
     
 }

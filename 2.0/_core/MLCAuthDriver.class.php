@@ -235,6 +235,7 @@ class MLCAuthDriver{
     	if(is_null($objSession)){
         	$objSession = self::LoadSession();
     	}
+        //error_log("Domain:" . self::$strDomain);
         MLCCookieDriver::RemoveCookie(self::SESSION_COOKIE, self::$strPath, self::$strDomain);
         if(!is_null($objSession)){
             $objSession->EndDate = MLCDateTime::Now();
@@ -350,12 +351,31 @@ class MLCAuthDriver{
         return $objRoll;
 
     }
+    public static function GetRollsByEntity(BaseEntity $objEntity, $strRollType = null, $blnAllowInvites = false){
+        $strQuery = sprintf(
+            'WHERE idEntity = %s AND entityType = "%s"',
+            $objEntity->getId(),
+            get_class($objEntity)
+        );
+        if(is_null($strRollType)){
+            $strQuery .= sprintf(' AND rollType = "%s"', $strRollType);
+        }
+        if(!$blnAllowInvites){
+            $strQuery .= ' AND idAuthUser IS NOT NULL ';
+        }
+        $arrRolls =  AuthRoll::Query(
+            $strQuery
+        );
+        return $arrRolls;
+
+    }
     public static function GetUsersByEntity(BaseEntity $objEntity, $strRollType = null){
 
-        $arrRolls =  self::GetRollByEntity($objEntity, $strRollType);
+        $arrRolls =  self::GetRollsByEntity($objEntity, $strRollType);
+
         $arrUsers = array();
         foreach($arrRolls as $intIndex => $objRoll){
-            $arrUsers[] = AuthUser::LoadById($objRoll->IdUser);
+            $arrUsers[] = AuthUser::LoadById($objRoll->IdAuthUser);
         }
         return $arrUsers;
     }
@@ -383,7 +403,7 @@ class MLCAuthDriver{
 
             $objRoll = AuthRoll::Query(
                 sprintf(
-                    ' WHERE email = "%s" AND idEntity = %s AND entityType = %s AND rollType = "%s"',
+                    ' WHERE inviteEmail = "%s" AND idEntity = %s AND entityType = "%s" AND rollType = "%s"',
                     $mixUser,
                     $objEntity->getId(),
                     get_class($objEntity),
@@ -404,7 +424,7 @@ class MLCAuthDriver{
             return $objRoll;
         }
     }
-    public function UpdatePendingInvites($mixUser = null){
+    public static function UpdatePendingInvites($mixUser = null){
         $arrRolls = null;
         $strField = 'inviteEmail';
         if(is_null($mixUser)){
@@ -422,11 +442,13 @@ class MLCAuthDriver{
                     throw new MLCWrongTypeException('UpdatePendingInvites', $mixUser);
                 }
             }
+        }else{
+            $strOldEmail = $mixUser->Email;
         }
         if(is_null($arrRolls)){
             //load rolls w/o user by email
             $arrRolls = AuthRoll::Query(
-                sptrintf(
+                sprintf(
                     'WHERE %s = "%s" AND idAuthUser IS NULL',
                     $strField,
                     $strOldEmail
