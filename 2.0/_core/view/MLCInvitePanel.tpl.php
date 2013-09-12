@@ -1,6 +1,6 @@
 <?php if(!is_null($_CONTROL->objEntity)){ ?>
     <p>
-        Invite some one to the roll of <b><?php echo $_CONTROL->strRollType; ?></b> for <b><?php echo $_CONTROL->objEntity->__toString(); ?></b>
+        Invite someone to the roll of <b><?php echo $_CONTROL->strRollType; ?></b> for <b><?php echo $_CONTROL->objEntity->__toString(); ?></b>
     </p>
 
     <div class="control-group">
