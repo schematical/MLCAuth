@@ -21,9 +21,9 @@
 * - __get()
 * - __set()
 * Classes list:
-* - AuthUserSettingTypeCd_tpcdBase extends BaseEntity
+* - AuthUserSettingTypeCd_tpcdBase extends MLCBaseEntity
 */
-class AuthUserSettingTypeCd_tpcdBase extends BaseEntity {
+class AuthUserSettingTypeCd_tpcdBase extends MLCBaseEntity {
     const DB_CONN = 'DB_0';
     const TABLE_NAME = 'AuthUserSettingTypeCd_tpcd';
     const P_KEY = 'idUserSettingType';
@@ -44,7 +44,7 @@ class AuthUserSettingTypeCd_tpcdBase extends BaseEntity {
     public static function LoadAll() {
         $sql = sprintf("SELECT * FROM %s;", self::TABLE_NAME);
         $result = MLCDBDriver::Query($sql, AuthUserSettingTypeCd_tpcd::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthUserSettingTypeCd_tpcd();
             $tObj->materilize($data);
@@ -71,7 +71,7 @@ class AuthUserSettingTypeCd_tpcdBase extends BaseEntity {
     public static function Query($strExtra, $blnReturnSingle = false) {
         $sql = sprintf("SELECT * FROM %s %s;", self::TABLE_NAME, $strExtra);
         $result = MLCDBDriver::Query($sql, self::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthUserSettingTypeCd_tpcd();
             $tObj->materilize($data);
@@ -146,7 +146,7 @@ class AuthUserSettingTypeCd_tpcdBase extends BaseEntity {
         $sql = sprintf("SELECT * FROM %s %s;", self::TABLE_NAME, $strExtra);
         //die($sql);
         $result = MLCDBDriver::query($sql, self::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthUserSettingTypeCd_tpcd();
             $tObj->materilize($data);

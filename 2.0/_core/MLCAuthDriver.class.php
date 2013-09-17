@@ -331,7 +331,7 @@ class MLCAuthDriver{
         return $arrRolls;
 
     }
-    public static function GetRollByEntity(BaseEntity $objEntity, $strRollType = null, $blnAllowInvites = false){
+    public static function GetRollByEntity(MLCBaseEntity $objEntity, $strRollType = null, $blnAllowInvites = false){
         $strQuery = sprintf(
             'WHERE idAuthUser = %s AND idEntity = %s AND entityType = "%s"',
             self::IdUser(),
@@ -351,7 +351,7 @@ class MLCAuthDriver{
         return $objRoll;
 
     }
-    public static function GetRollsByEntity(BaseEntity $objEntity, $strRollType = null, $blnAllowInvites = false){
+    public static function GetRollsByEntity(MLCBaseEntity $objEntity, $strRollType = null, $blnAllowInvites = false){
         $strQuery = sprintf(
             'WHERE idEntity = %s AND entityType = "%s"',
             $objEntity->getId(),
@@ -369,7 +369,7 @@ class MLCAuthDriver{
         return $arrRolls;
 
     }
-    public static function GetUsersByEntity(BaseEntity $objEntity, $strRollType = null){
+    public static function GetUsersByEntity(MLCBaseEntity $objEntity, $strRollType = null){
 
         $arrRolls =  self::GetRollsByEntity($objEntity, $strRollType);
 

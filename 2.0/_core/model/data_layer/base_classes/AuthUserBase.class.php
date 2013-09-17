@@ -23,9 +23,9 @@
 * - __get()
 * - __set()
 * Classes list:
-* - AuthUserBase extends BaseEntity
+* - AuthUserBase extends MLCBaseEntity
 */
-class AuthUserBase extends BaseEntity {
+class AuthUserBase extends MLCBaseEntity {
     const DB_CONN = 'DB_0';
     const TABLE_NAME = 'AuthUser';
     const P_KEY = 'idUser';
@@ -46,7 +46,7 @@ class AuthUserBase extends BaseEntity {
     public static function LoadAll() {
         $sql = sprintf("SELECT * FROM %s;", self::TABLE_NAME);
         $result = MLCDBDriver::Query($sql, AuthUser::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthUser();
             $tObj->materilize($data);
@@ -106,7 +106,7 @@ class AuthUserBase extends BaseEntity {
     public static function Query($strExtra, $blnReturnSingle = false) {
         $sql = sprintf("SELECT * FROM %s %s;", self::TABLE_NAME, $strExtra);
         $result = MLCDBDriver::Query($sql, self::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthUser();
             $tObj->materilize($data);
@@ -193,7 +193,7 @@ class AuthUserBase extends BaseEntity {
         $sql = sprintf("SELECT * FROM %s %s;", self::TABLE_NAME, $strExtra);
         //die($sql);
         $result = MLCDBDriver::query($sql, self::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthUser();
             $tObj->materilize($data);

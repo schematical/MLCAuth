@@ -20,9 +20,9 @@
 * - __get()
 * - __set()
 * Classes list:
-* - AuthRollBase extends BaseEntity
+* - AuthRollBase extends MLCBaseEntity
 */
-class AuthRollBase extends BaseEntity {
+class AuthRollBase extends MLCBaseEntity {
     const DB_CONN = 'DB_0';
     const TABLE_NAME = 'AuthRoll';
     const P_KEY = 'idAuthRoll';
@@ -43,7 +43,7 @@ class AuthRollBase extends BaseEntity {
     public static function LoadAll() {
         $sql = sprintf("SELECT * FROM %s;", self::TABLE_NAME);
         $result = MLCDBDriver::Query($sql, AuthRoll::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthRoll();
             $tObj->materilize($data);
@@ -94,7 +94,7 @@ class AuthRollBase extends BaseEntity {
     public static function Query($strExtra, $blnReturnSingle = false) {
         $sql = sprintf("SELECT * FROM %s %s;", self::TABLE_NAME, $strExtra);
         $result = MLCDBDriver::Query($sql, self::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthRoll();
             $tObj->materilize($data);
@@ -163,7 +163,7 @@ class AuthRollBase extends BaseEntity {
         $sql = sprintf("SELECT * FROM %s %s;", self::TABLE_NAME, $strExtra);
         //die($sql);
         $result = MLCDBDriver::query($sql, self::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthRoll();
             $tObj->materilize($data);

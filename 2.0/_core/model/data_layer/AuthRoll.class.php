@@ -5,7 +5,7 @@ class AuthRoll extends AuthRollBase {
         $objEntity = call_user_func($this->EntityType . '::LoadById', $this->idEntity);
         return $objEntity;
     }
-    public function SetEntity(BaseEntity $objEntity ){
+    public function SetEntity(MLCBaseEntity $objEntity ){
         $this->EntityType = get_class($objEntity);
         $this->idEntity = $objEntity->getId();
     }

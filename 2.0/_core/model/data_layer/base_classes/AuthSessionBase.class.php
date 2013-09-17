@@ -22,9 +22,9 @@
 * - __get()
 * - __set()
 * Classes list:
-* - AuthSessionBase extends BaseEntity
+* - AuthSessionBase extends MLCBaseEntity
 */
-class AuthSessionBase extends BaseEntity {
+class AuthSessionBase extends MLCBaseEntity {
     const DB_CONN = 'DB_0';
     const TABLE_NAME = 'AuthSession';
     const P_KEY = 'idSession';
@@ -45,7 +45,7 @@ class AuthSessionBase extends BaseEntity {
     public static function LoadAll() {
         $sql = sprintf("SELECT * FROM %s;", self::TABLE_NAME);
         $result = MLCDBDriver::Query($sql, AuthSession::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthSession();
             $tObj->materilize($data);
@@ -84,7 +84,7 @@ class AuthSessionBase extends BaseEntity {
     public static function Query($strExtra, $blnReturnSingle = false) {
         $sql = sprintf("SELECT * FROM %s %s;", self::TABLE_NAME, $strExtra);
         $result = MLCDBDriver::Query($sql, self::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthSession();
             $tObj->materilize($data);
@@ -114,7 +114,7 @@ class AuthSessionBase extends BaseEntity {
     public static function LoadCollByIdUser($intIdUser) {
         $sql = sprintf("SELECT * FROM AuthSession WHERE idUser = %s;", $intIdUser);
         $result = MLCDBDriver::Query($sql, self::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $objAuthSession = new AuthSession();
             $objAuthSession->materilize($data);
@@ -170,7 +170,7 @@ class AuthSessionBase extends BaseEntity {
         $sql = sprintf("SELECT * FROM %s %s;", self::TABLE_NAME, $strExtra);
         //die($sql);
         $result = MLCDBDriver::query($sql, self::DB_CONN);
-        $coll = new BaseEntityCollection();
+        $coll = new MLCBaseEntityCollection();
         while ($data = mysql_fetch_assoc($result)) {
             $tObj = new AuthSession();
             $tObj->materilize($data);
