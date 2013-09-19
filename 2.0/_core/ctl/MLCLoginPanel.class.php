@@ -55,7 +55,7 @@ class MLCLoginPanel extends MJaxPanel{
            $this->TriggerEvent('auth_login');
             $this->objForm->CtlAlert(
                 $this->txtPass->ControlId . '_holder',
-                "Email and Password Do Not Match",
+                "Success!",
                 'success'
             );
             return false;
